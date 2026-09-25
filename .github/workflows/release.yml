@@ -1,0 +1,42 @@
+name: release
+
+# Every push re-runs fetch.sh on a clean runner, so a moved source or a
+# broken sha256 pin shows up before anything is tagged; a v* tag also
+# publishes what it staged as that tag's release assets.
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: fetch, verify and publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Fetch and verify
+        run: |
+          sh fetch.sh dist
+          ls -la dist
+
+      - name: Publish release
+        if: startsWith(github.ref, 'refs/tags/v')
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "release $TAG already exists, uploading assets"
+            gh release upload "$TAG" dist/* --clobber
+          else
+            gh release create "$TAG" dist/* \
+              --title "firmware ${TAG#v}" \
+              --notes "Unmodified firmware images for anyvm, each with a .sha256 sidecar and its package's license file. README.md says where every image comes from." \
+              --verify-tag
+          fi
