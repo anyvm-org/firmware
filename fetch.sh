@@ -71,3 +71,9 @@ fetch "$DEB" 50d7c5f780f215db81677e08d21e681b61295ffe9040429cff9d9c2a0d03fe3d \
 extract "$DEB" ./usr/share/qemu-efi-aarch64/QEMU_EFI.fd QEMU_EFI-2024.02-2ubuntu0.9.fd \
   8ff1fb8da2d8baf739bfdf020ff9ede225172c3a1b9d98e64e2b7935fd5ad4ab
 license "$DEB" ./usr/share/doc/qemu-efi-aarch64/copyright QEMU_EFI-2024.02-2ubuntu0.9
+# The same package's pflash CODE image without Secure Boot (a separate build
+# from QEMU_EFI.fd, padded to the 64 MiB flash size): what the anyvm-org
+# image builders boot, as they did on the ubuntu-24.04 runners.
+extract "$DEB" ./usr/share/AAVMF/AAVMF_CODE.no-secboot.fd AAVMF_CODE.no-secboot-2024.02-2ubuntu0.9.fd \
+  4a4cb7f6d8106bb2a7dd8c763fab14b1810152136fc4304e5b728f0043e84f12
+license "$DEB" ./usr/share/doc/qemu-efi-aarch64/copyright AAVMF_CODE.no-secboot-2024.02-2ubuntu0.9

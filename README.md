@@ -1,7 +1,7 @@
 # firmware
 
-Firmware images that [anyvm](https://github.com/anyvm-org/anyvm) downloads
-on demand, published as release assets.
+Firmware images that [anyvm](https://github.com/anyvm-org/anyvm) and the
+anyvm-org image builders download on demand, published as release assets.
 
 Nothing here is built or patched, and no image is committed to git.
 `fetch.sh` downloads each image's upstream distribution package, copies the
@@ -27,6 +27,12 @@ anyvm therefore boots `QEMU_EFI-2024.02-2ubuntu0.9.fd` instead whenever the
 host's own firmware is a 2025.08 or later build. Passing an asset's URL to
 anyvm's `--firmware` uses that image on any host.
 
+The image builders (`build.py`, generated from
+[base-builder](https://github.com/anyvm-org/base-builder)) apply the same
+rule with `AAVMF_CODE.no-secboot-2024.02-2ubuntu0.9.fd`, the CODE image
+they booted on the ubuntu-24.04 runners, so their aarch64 builds keep that
+firmware on ubuntu-26.04.
+
 License: each image's `.copyright` file in the release, the package's
 Debian copyright file (edk2 is BSD-2-Clause-Patent; it lists the bundled
 third-party code and its licenses too).
@@ -47,6 +53,20 @@ It predates the LPA2 code and boots both of those guests on QEMU 10.2.1.
 The package pin was checked against the archive on 2026-09-25: its SHA256
 and SHA512 are the ones listed in the noble-updates Packages index, which
 the archive-signed InRelease covers.
+
+### AAVMF_CODE.no-secboot-2024.02-2ubuntu0.9.fd
+
+`/usr/share/AAVMF/AAVMF_CODE.no-secboot.fd` (the target of
+`AAVMF_CODE.fd`) from the same package: the pflash CODE image without
+Secure Boot, padded to the 64 MiB flash size. It is a separate build from
+`QEMU_EFI.fd` above, not a padded copy of it. Its VARS companion,
+`AAVMF_VARS.fd`, is byte-identical in this package and in Ubuntu 26.04's
+2025.11-3ubuntu7.2, so it is not published here.
+
+| file | sha256 |
+| --- | --- |
+| `qemu-efi-aarch64_2024.02-2ubuntu0.9_all.deb` | `50d7c5f780f215db81677e08d21e681b61295ffe9040429cff9d9c2a0d03fe3d` |
+| `AAVMF_CODE.no-secboot-2024.02-2ubuntu0.9.fd` | `4a4cb7f6d8106bb2a7dd8c763fab14b1810152136fc4304e5b728f0043e84f12` |
 
 ### QEMU_EFI-2026.05-2ubuntu2.fd
 
